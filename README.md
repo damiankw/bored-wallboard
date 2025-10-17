@@ -19,11 +19,6 @@ A dynamic, tile-based monitoring dashboard for operations teams. Built with Node
    npm install
    ```
 
-2. **Initialize Database**
-   ```bash
-   npm run init-db
-   ```
-
 3. **Start Server**
    ```bash
    npm start

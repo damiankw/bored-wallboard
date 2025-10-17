@@ -51,6 +51,8 @@
             flex-direction: column;
             height: 280px;
             min-height: 280px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
 
@@ -110,40 +112,10 @@
             flex-direction: column !important;
             height: 280px !important;
             min-height: 280px !important;
-        }
-
-        /* CENTER ALIGN all tile content like the red tiles - EXCEPT FOOTER */
-        .tile.success .tile-header,
-        .tile.warning .tile-header,
-        .tile.error .tile-header,
-        .tile.info .tile-header,
-        .tile.success .tile-value,
-        .tile.warning .tile-value,
-        .tile.error .tile-value,
-        .tile.info .tile-value,
-        .tile.success .tile-subtitle,
-        .tile.warning .tile-subtitle,
-        .tile.error .tile-subtitle,
-        .tile.info .tile-subtitle {
-            text-align: center !important;
-            width: 100%;
-        }
-
-        /* Center align the main tile container content - BUT NOT FOOTER */
-        .tile.success,
-        .tile.warning,
-        .tile.error,
-        .tile.info {
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Center align only the content, not footer */
-        .tile.success > *:not(.tile-footer),
-        .tile.warning > *:not(.tile-footer),
-        .tile.error > *:not(.tile-footer),
-        .tile.info > *:not(.tile-footer) {
-            text-align: center;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
         }
 
         /* OVERRIDE: Keep footer left-right aligned */
