@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICT Operations Dashboard</title>
+    <title>Bored Wallboard</title>
     <style>
         * {
             margin: 0;
@@ -496,7 +496,7 @@
     </div>
 
     <div class="header">
-        <h1 id="dashboardTitle">ICT Operations Dashboard</h1>
+        <h1 id="dashboardTitle">Bored Wallboard</h1>
     </div>
 
     <div class="dashboard" id="dashboard">
@@ -655,10 +655,10 @@
                             '</div>' +
                             '<div id="curl-example" class="api-content">' +
                                 '<h4>Add a tile with cURL:</h4>' +
-                                '<pre><span class="api-url">curl -X POST http://localhost:3000/api/tiles</span> \\<br>' +
+                                '<pre><span class="api-url">curl -X POST http://localhost:3000/api/add</span> \\<br>' +
                                 '  -H "Content-Type: application/json" \\<br>' +
                                 '  -d <span class="api-json">\'{\n' +
-                                '    "tile_id": "server_cpu",\n' +
+                                '    "id": "server_cpu",\n' +
                                 '    "title": "Server CPU Usage",\n' +
                                 '    "icon": "💻",\n' +
                                 '    "value": "75%",\n' +
@@ -669,14 +669,14 @@
                             '<div id="powershell-example" class="api-content" style="display: none;">' +
                                 '<h4>Add a tile with PowerShell:</h4>' +
                                 '<pre><span class="api-json">$body = @{\n' +
-                                '    tile_id = "network_status"\n' +
+                                '    id = "network_status"\n' +
                                 '    title = "Network Status"\n' +
                                 '    icon = "🌐"\n' +
                                 '    value = "Online"\n' +
                                 '    status = "success"\n' +
                                 '    status_text = "Healthy"\n' +
                                 '} | ConvertTo-Json\n\n</span>' +
-                                '<span class="api-url">Invoke-RestMethod -Uri "http://localhost:3000/api/tiles" `<br>' +
+                                '<span class="api-url">Invoke-RestMethod -Uri "http://localhost:3000/api/add" `<br>' +
                                 '  -Method POST `<br>' +
                                 '  -ContentType "application/json" `<br>' +
                                 '  -Body $body</span></pre>' +
@@ -684,7 +684,7 @@
                             '<div id="php-example" class="api-content" style="display: none;">' +
                                 '<h4>Add a tile with PHP:</h4>' +
                                 '<pre><span class="api-json">$data = [\n' +
-                                '    \'tile_id\' => \'database_conn\',\n' +
+                                '    \'id\' => \'database_conn\',\n' +
                                 '    \'title\' => \'Database Connections\',\n' +
                                 '    \'icon\' => \'🗄️\',\n' +
                                 '    \'value\' => \'24\',\n' +
@@ -699,7 +699,7 @@
                                 '        \'content\' => $json\n' +
                                 '    ]\n' +
                                 ']);\n\n</span>' +
-                                '<span class="api-url">file_get_contents(\'http://localhost:3000/api/tiles\', false, $context);</span></pre>' +
+                                '<span class="api-url">file_get_contents(\'http://localhost:3000/api/add\', false, $context);</span></pre>' +
                             '</div>' +
                         '</div>';
                     
@@ -782,8 +782,8 @@
         // Update time display every second
         setInterval(updateTime, 1000);
 
-        console.log('🚀 ICT Wallboard loaded');
-        console.log(`🔄 Auto-refresh every ${REFRESH_INTERVAL / 1000} seconds`);
+        console.log('- Bored Wallboard loaded');
+        console.log(`- Auto-refresh every ${REFRESH_INTERVAL / 1000} seconds`);
     </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
--- ICT Wallboard Database Setup
+-- Bored Wallboard Database Setup
 -- SQLite database for storing dynamic wallboard tiles
 -- Each row represents a single tile with all its configuration and data
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS settings (
 
 -- Insert default settings
 INSERT OR REPLACE INTO settings (key, value) VALUES
-('dashboard_title', 'ICT Operations Dashboard'),
+('dashboard_title', 'Bored Wallboard'),
 ('tile_lifetime_hours', '24'),
 ('setup_completed', 'false');
 

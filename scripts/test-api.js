@@ -115,7 +115,7 @@ async function testCleanup() {
 
 // Main test runner
 async function runTests() {
-    console.log('🧪 Starting API Tests for ICT Wallboard\n');
+    console.log('🧪 Starting API Tests for Wallboard\n');
     
     // Check if server is running
     try {

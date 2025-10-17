@@ -17,12 +17,12 @@ const dbPath = path.join(dataDir, 'wallboard.db');
 // Ensure data directory exists
 if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
-    console.log('📁 Created data directory');
+    console.log('- Created data directory');
 }
 
 // Check if database file exists
 const databaseExists = fs.existsSync(dbPath);
-console.log(`🗃️  Database exists: ${databaseExists}`);
+console.log(`- Database exists: ${databaseExists}`);
 
 // Initialize database connection
 let db;
@@ -30,33 +30,33 @@ let setupRequired = false;
 
 try {
     db = new sqlite3.Database(dbPath);
-    console.log('🔌 Connected to SQLite database');
+    console.log('- Connected to SQLite database');
     
     // Check if setup is required
     if (!databaseExists) {
         setupRequired = true;
-        console.log('⚠️  New database - setup required');
+        console.log('- New database - setup required');
     } else {
         // Check if settings table exists and setup is completed
         db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", (err, row) => {
             if (err || !row) {
                 setupRequired = true;
-                console.log('⚠️  Settings table missing - setup required');
+                console.log('- Settings table missing - setup required');
             } else {
                 // Check if setup_completed setting exists and is true
                 db.get('SELECT value FROM settings WHERE key = ?', ['setup_completed'], (err, settingRow) => {
                     if (err || !settingRow || settingRow.value !== 'true') {
                         setupRequired = true;
-                        console.log('⚠️  Setup not completed - setup required');
+                        console.log('- Setup not completed - setup required');
                     } else {
-                        console.log('✅ Database setup verified');
+                        console.log('- Database setup verified');
                     }
                 });
             }
         });
     }
 } catch (error) {
-    console.error('❌ Database connection failed:', error);
+    console.error('- Database connection failed:', error);
     setupRequired = true;
 }
 
@@ -96,14 +96,14 @@ async function requireSetup(req, res, next) {
     // Verify settings table exists
     db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", (err, row) => {
         if (err || !row) {
-            console.log('⚠️  Settings table missing - redirecting to setup');
+            console.log('- Settings table missing - redirecting to setup');
             return res.redirect('/setup.html');
         }
 
         // Check if setup is completed
         db.get('SELECT value FROM settings WHERE key = ?', ['setup_completed'], (err, settingRow) => {
             if (err || !settingRow || settingRow.value !== 'true') {
-                console.log('⚠️  Setup not completed - redirecting to setup');
+                console.log('- Setup not completed - redirecting to setup');
                 return res.redirect('/setup.html');
             }
             next();
@@ -490,8 +490,8 @@ setInterval(() => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`🚀 ICT Wallboard server running on http://localhost:${PORT}`);
-    console.log(`📊 Dashboard: http://localhost:${PORT}`);
-    console.log(`🔌 API: http://localhost:${PORT}/api/tiles`);
-    console.log(`❤️  Health: http://localhost:${PORT}/api/health`);
+    console.log(`- Wallboard server running on http://localhost:${PORT}`);
+    console.log(`- Dashboard: http://localhost:${PORT}`);
+    console.log(`- API: http://localhost:${PORT}/api/tiles`);
+    console.log(`- Health: http://localhost:${PORT}/api/health`);
 });

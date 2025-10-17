@@ -1,6 +1,6 @@
-# ICT Wallboard - Node.js Application
+# Wallboard - Node.js Application
 
-A dynamic, tile-based monitoring dashboard for ICT operations teams. Built with Node.js, Express, SQLite, and vanilla JavaScript.
+A dynamic, tile-based monitoring dashboard for operations teams. Built with Node.js, Express, SQLite, and vanilla JavaScript.
 
 ## Features
 
@@ -258,7 +258,7 @@ npm test    # Runs automated API tests
 
 2. **Start with PM2**
    ```bash
-   pm2 start server.js --name "ict-wallboard"
+   pm2 start server.js --name "wallboard"
    pm2 startup
    pm2 save
    ```

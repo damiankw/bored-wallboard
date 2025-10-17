@@ -7,7 +7,7 @@ const dataDir = path.join(__dirname, '..', 'data');
 const dbPath = path.join(dataDir, 'wallboard.db');
 const sqlPath = path.join(__dirname, '..', 'dev', 'setup_database.sql');
 
-console.log('🔧 Initializing ICT Wallboard Database...\n');
+console.log('- Initializing Wallboard Database...\n');
 
 // Ensure data directory exists
 if (!fs.existsSync(dataDir)) {
