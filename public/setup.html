@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallboard Setup - First Run</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .setup-container {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1e1e1e 100%);
+            border: 1px solid #404040;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .setup-header h1 {
+            font-size: 2.5rem;
+            color: #ffffff;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .setup-header p {
+            color: #cccccc;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: #3a3a3a;
+            border: 1px solid #555555;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #888888;
+            font-size: 0.8rem;
+        }
+
+        .setup-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .setup-button:hover {
+            background: linear-gradient(90deg, #0099cc, #007799);
+        }
+
+        .setup-button:disabled {
+            background: #555555;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .status-error {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+
+        .status-loading {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+        }
+
+        .setup-footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #888888;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="setup-header">
+            <h1>🚀 Wallboard Setup</h1>
+            <p>Welcome! Let's configure your ICT Operations Dashboard</p>
+        </div>
+
+        <form id="setupForm">
+            <div class="form-group">
+                <label for="dashboardTitle">Dashboard Title</label>
+                <input type="text" id="dashboardTitle" name="dashboardTitle" 
+                       value="ICT Operations Dashboard" required>
+                <small>This will appear as the main heading on your wallboard</small>
+            </div>
+
+            <div class="form-group">
+                <label for="tileLifetime">Tile Lifetime</label>
+                <select id="tileLifetime" name="tileLifetime" required>
+                    <option value="1">1 Hour</option>
+                    <option value="4">4 Hours</option>
+                    <option value="8">8 Hours</option>
+                    <option value="12">12 Hours</option>
+                    <option value="24" selected>24 Hours (1 Day)</option>
+                    <option value="48">48 Hours (2 Days)</option>
+                    <option value="72">72 Hours (3 Days)</option>
+                    <option value="168">1 Week</option>
+                    <option value="0">Never Expire</option>
+                </select>
+                <small>How long tiles stay visible without updates before automatically disappearing</small>
+            </div>
+
+            <button type="submit" class="setup-button" id="setupButton">
+                Initialize Wallboard
+            </button>
+        </form>
+
+        <div id="statusMessage"></div>
+
+        <div class="setup-footer">
+            <p>This will create the database and configure your wallboard for first use</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('setupForm');
+        const button = document.getElementById('setupButton');
+        const statusDiv = document.getElementById('statusMessage');
+
+        function showStatus(message, type) {
+            statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            button.disabled = true;
+            button.textContent = 'Initializing...';
+            showStatus('🔧 Setting up database and configuration...', 'loading');
+
+            const formData = {
+                dashboardTitle: document.getElementById('dashboardTitle').value,
+                tileLifetime: parseInt(document.getElementById('tileLifetime').value)
+            };
+
+            try {
+                // Initialize the database and settings
+                const response = await fetch('/api/setup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('✅ Setup completed successfully! Redirecting to dashboard...', 'success');
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    throw new Error(result.error || 'Setup failed');
+                }
+
+            } catch (error) {
+                console.error('Setup error:', error);
+                showStatus(`❌ Setup failed: ${error.message}`, 'error');
+                button.disabled = false;
+                button.textContent = 'Initialize Wallboard';
+            }
+        });
+
+        // Check if already setup
+        async function checkSetupStatus() {
+            try {
+                const response = await fetch('/api/setup-status');
+                const result = await response.json();
+                
+                if (result.setupCompleted) {
+                    showStatus('✅ Wallboard is already configured. Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                }
+            } catch (error) {
+                // If error, assume setup is needed
+                console.log('Setup check failed, showing setup form');
+            }
+        }
+
+        // Check setup status on page load
+        checkSetupStatus();
+    </script>
+</body>
+</html>

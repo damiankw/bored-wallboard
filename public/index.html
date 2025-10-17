@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT Operations Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tile {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1e1e1e 100%);
+            border: 1px solid #404040;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 280px;
+            min-height: 280px;
+        }
+
+
+
+        .tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+        }
+
+        /* Success/Normal tiles - Green background (COPIED FROM RED TEMPLATE) */
+        .tile.success {
+            background: linear-gradient(135deg, #1a4d3a 0%, #0d2818 100%);
+            border: 1px solid #2d5a42;
+        }
+
+        .tile.success::before {
+            background: linear-gradient(90deg, #00ff88, #00cc6a);
+        }
+
+
+
+        /* Warning tiles - Orange background (COPIED FROM RED TEMPLATE) */
+        .tile.warning {
+            background: linear-gradient(135deg, #4d3a1a 0%, #2d220f 100%);
+            border: 1px solid #5a4222;
+        }
+
+        .tile.warning::before {
+            background: linear-gradient(90deg, #ffaa00, #ff8800);
+        }
+
+
+
+        /* Error/Critical tiles - Red background */
+        .tile.error {
+            background: linear-gradient(135deg, #4d1a1a 0%, #2d0f0f 100%);
+            border: 1px solid #5a2222;
+        }
+
+        .tile.error::before {
+            background: linear-gradient(90deg, #ff4444, #cc0000);
+        }
+
+
+
+        /* Ensure all tile variants maintain flexbox layout - MATCH PIE TILE HEIGHT */
+        .tile.success,
+        .tile.warning, 
+        .tile.error,
+        .tile.info {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 280px !important;
+            min-height: 280px !important;
+        }
+
+        /* CENTER ALIGN all tile content like the red tiles - EXCEPT FOOTER */
+        .tile.success .tile-header,
+        .tile.warning .tile-header,
+        .tile.error .tile-header,
+        .tile.info .tile-header,
+        .tile.success .tile-value,
+        .tile.warning .tile-value,
+        .tile.error .tile-value,
+        .tile.info .tile-value,
+        .tile.success .tile-subtitle,
+        .tile.warning .tile-subtitle,
+        .tile.error .tile-subtitle,
+        .tile.info .tile-subtitle {
+            text-align: center !important;
+            width: 100%;
+        }
+
+        /* Center align the main tile container content - BUT NOT FOOTER */
+        .tile.success,
+        .tile.warning,
+        .tile.error,
+        .tile.info {
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Center align only the content, not footer */
+        .tile.success > *:not(.tile-footer),
+        .tile.warning > *:not(.tile-footer),
+        .tile.error > *:not(.tile-footer),
+        .tile.info > *:not(.tile-footer) {
+            text-align: center;
+        }
+
+        /* OVERRIDE: Keep footer left-right aligned */
+        .tile-footer,
+        .tile.success .tile-footer,
+        .tile.warning .tile-footer,
+        .tile.error .tile-footer,
+        .tile.info .tile-footer {
+            display: flex !important;
+            justify-content: space-between !important;
+            text-align: left !important;
+            align-items: center !important;
+            width: 100% !important;
+        }
+
+        /* Force footer spans to not center */
+        .tile-footer span {
+            text-align: left !important;
+            flex: none !important;
+        }
+
+        .tile-footer span:first-child {
+            justify-self: flex-start !important;
+        }
+
+        .tile-footer span:last-child {
+            justify-self: flex-end !important;
+        }
+
+        /* Circular progress wheel styles */
+        .progress-wheel {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 15px auto;
+            flex-shrink: 0;
+        }
+
+        .progress-wheel svg {
+            transform: rotate(-90deg);
+            width: 120px;
+            height: 120px;
+        }
+
+        .progress-wheel-bg {
+            fill: none;
+            stroke: #333333;
+            stroke-width: 8;
+        }
+
+        .progress-wheel-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+
+        }
+
+        .progress-wheel-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-wheel-percentage {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: block;
+        }
+
+        .progress-wheel-label {
+            font-size: 0.7rem;
+            color: #888888;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .tile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tile-title {
+            font-size: 1.1rem;
+            color: #cccccc;
+            font-weight: 500;
+        }
+
+        .tile-icon {
+            font-size: 1.5rem;
+            opacity: 0.7;
+        }
+
+        .tile-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .tile-subtitle {
+            font-size: 0.9rem;
+            color: #888888;
+            margin-bottom: 15px;
+        }
+
+        .tile-progress {
+            width: 100%;
+            height: 6px;
+            background: #333333;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .tile-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+
+        }
+
+        .tile-footer {
+            font-size: 0.8rem;
+            color: #666666;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 15px;
+            text-align: left !important;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #00ff88;
+        }
+
+        .status-offline {
+            background: #ff4444;
+        }
+
+        .status-warning {
+            background: #ffaa00;
+        }
+
+        .large-tile {
+            grid-column: span 2;
+        }
+
+        .loading {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+        }
+
+        .error {
+            text-align: center;
+            color: #ff6b6b;
+            padding: 40px;
+            background: linear-gradient(135deg, #2a1f1f 0%, #1f1515 100%);
+            border: 1px solid #4a3434;
+            border-radius: 12px;
+            margin: 20px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.1);
+        }
+
+        .error h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .error p {
+            color: #cccccc;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .retry-info {
+            color: #888888;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        .no-tiles {
+            text-align: center;
+            color: #cccccc;
+            padding: 40px;
+            background: linear-gradient(135deg, #2d2d2d 0%, #1e1e1e 100%);
+            border: 1px solid #404040;
+            border-radius: 12px;
+            margin: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .no-tiles-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .no-tiles h3 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+
+        .no-tiles p {
+            color: #888888;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .api-examples {
+            text-align: left;
+            margin-top: 30px;
+        }
+
+        .api-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .api-tab {
+            background: #404040;
+            color: #cccccc;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .api-tab.active {
+            background: #0066cc;
+            color: #ffffff;
+        }
+
+        .api-tab:hover {
+            background: #555555;
+        }
+
+        .api-tab.active:hover {
+            background: #0080ff;
+        }
+
+        .api-content {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #ffffff;
+            overflow-x: auto;
+        }
+
+        .api-content h4 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1rem;
+        }
+
+        .api-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .api-url {
+            color: #ffaa00;
+        }
+
+        .api-json {
+            color: #88ff88;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .large-tile {
+                grid-column: span 1;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .update-time {
+            text-align: center;
+            margin-top: 30px;
+            color: #666666;
+            font-size: 0.9rem;
+        }
+
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .connection-online {
+            background: #1a4d3a;
+            color: #00ff88;
+        }
+
+        .connection-offline {
+            background: #4d1a1a;
+            color: #ff4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status" id="connectionStatus">
+        🔄 Connecting...
+    </div>
+
+    <div class="header">
+        <h1 id="dashboardTitle">ICT Operations Dashboard</h1>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <div class="loading">
+            <h3>Loading tiles...</h3>
+            <p>Fetching latest data from server</p>
+        </div>
+    </div>
+
+    <div class="update-time">
+        Last updated: <span id="updateTime">Loading...</span>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = window.location.origin;
+        const REFRESH_INTERVAL = 30000; // 30 seconds
+        
+        let lastUpdateTime = null;
+        let connectionOnline = true;
+
+        // Update timestamp
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('updateTime').textContent = timeString;
+        }
+
+        // Update connection status
+        function updateConnectionStatus(online) {
+            const statusEl = document.getElementById('connectionStatus');
+            connectionOnline = online;
+            
+            if (online) {
+                statusEl.textContent = '🟢 Online';
+                statusEl.className = 'connection-status connection-online';
+            } else {
+                statusEl.textContent = '🔴 Offline';
+                statusEl.className = 'connection-status connection-offline';
+            }
+        }
+
+        // Create tile element
+        function createTile(tile) {
+            const tileEl = document.createElement('div');
+            tileEl.className = `tile ${tile.status}`;
+            tileEl.dataset.tileId = tile.tile_id;
+
+            let content = '';
+
+            if (tile.tile_type === 'progress_wheel') {
+                const percentage = tile.max_value > 0 ? Math.round((tile.current_value / tile.max_value) * 100) : 0;
+                const circumference = 2 * Math.PI * 50;
+                const offset = circumference - (percentage / 100) * circumference;
+                
+                let color = '#00d4ff';
+                if (percentage >= 90) color = '#ff4444';
+                else if (percentage >= 75) color = '#ffaa00';
+                else if (percentage >= 50) color = '#00ff88';
+
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${tile.icon}</span>
+                    </div>
+                    <div class="progress-wheel">
+                        <svg>
+                            <circle class="progress-wheel-bg" cx="60" cy="60" r="50"></circle>
+                            <circle class="progress-wheel-fill" cx="60" cy="60" r="50" 
+                                    stroke="${color}" 
+                                    stroke-dasharray="${circumference} ${circumference}" 
+                                    stroke-dashoffset="${offset}"></circle>
+                        </svg>
+                        <div class="progress-wheel-text">
+                            <span class="progress-wheel-percentage">${percentage}%</span>
+                            <span class="progress-wheel-label">${tile.sub_value}</span>
+                        </div>
+                    </div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator status-${tile.status === 'success' ? 'online' : tile.status === 'error' ? 'offline' : 'warning'}"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            } else if (tile.tile_type === 'progress_bar') {
+                const percentage = tile.max_value > 0 ? Math.round((tile.current_value / tile.max_value) * 100) : 0;
+                
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${tile.icon}</span>
+                    </div>
+                    <div class="tile-value">${tile.value}</div>
+                    <div class="tile-subtitle">${tile.sub_value}</div>
+                    <div class="tile-progress">
+                        <div class="tile-progress-bar" style="width: ${percentage}%;"></div>
+                    </div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator status-${tile.status === 'success' ? 'online' : tile.status === 'error' ? 'offline' : 'warning'}"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            } else {
+                // Standard tile
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${tile.icon}</span>
+                    </div>
+                    <div class="tile-value">${tile.value}</div>
+                    <div class="tile-subtitle">${tile.sub_value}</div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator status-${tile.status === 'success' ? 'online' : tile.status === 'error' ? 'offline' : 'warning'}"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            }
+
+            tileEl.innerHTML = content;
+            return tileEl;
+        }
+
+        // Fetch and render tiles
+        async function loadTiles() {
+            try {
+                const response = await fetch(`${API_BASE}/api/tiles`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                updateConnectionStatus(true);
+
+                const dashboard = document.getElementById('dashboard');
+                dashboard.innerHTML = '';
+
+                if (data.tiles && data.tiles.length > 0) {
+                    data.tiles.forEach(tile => {
+                        const tileEl = createTile(tile);
+                        dashboard.appendChild(tileEl);
+                    });
+                } else {
+                    // Create no-tiles content using DOM to avoid template literal issues
+                    const noTilesDiv = document.createElement('div');
+                    noTilesDiv.className = 'no-tiles';
+                    
+                    noTilesDiv.innerHTML = 
+                        '<div class="no-tiles-icon">📊</div>' +
+                        '<h3>No tiles available</h3>' +
+                        '<p>Your wallboard is ready! Add tiles using the API to start monitoring your systems.</p>' +
+                        '<div class="api-examples">' +
+                            '<div class="api-tabs">' +
+                                '<button class="api-tab active" data-tab="curl">cURL</button>' +
+                                '<button class="api-tab" data-tab="powershell">PowerShell</button>' +
+                                '<button class="api-tab" data-tab="php">PHP</button>' +
+                            '</div>' +
+                            '<div id="curl-example" class="api-content">' +
+                                '<h4>Add a tile with cURL:</h4>' +
+                                '<pre><span class="api-url">curl -X POST http://localhost:3000/api/tiles</span> \\<br>' +
+                                '  -H "Content-Type: application/json" \\<br>' +
+                                '  -d <span class="api-json">\'{\n' +
+                                '    "tile_id": "server_cpu",\n' +
+                                '    "title": "Server CPU Usage",\n' +
+                                '    "icon": "💻",\n' +
+                                '    "value": "75%",\n' +
+                                '    "status": "warning",\n' +
+                                '    "status_text": "Monitor"\n' +
+                                '  }\'</span></pre>' +
+                            '</div>' +
+                            '<div id="powershell-example" class="api-content" style="display: none;">' +
+                                '<h4>Add a tile with PowerShell:</h4>' +
+                                '<pre><span class="api-json">$body = @{\n' +
+                                '    tile_id = "network_status"\n' +
+                                '    title = "Network Status"\n' +
+                                '    icon = "🌐"\n' +
+                                '    value = "Online"\n' +
+                                '    status = "success"\n' +
+                                '    status_text = "Healthy"\n' +
+                                '} | ConvertTo-Json\n\n</span>' +
+                                '<span class="api-url">Invoke-RestMethod -Uri "http://localhost:3000/api/tiles" `<br>' +
+                                '  -Method POST `<br>' +
+                                '  -ContentType "application/json" `<br>' +
+                                '  -Body $body</span></pre>' +
+                            '</div>' +
+                            '<div id="php-example" class="api-content" style="display: none;">' +
+                                '<h4>Add a tile with PHP:</h4>' +
+                                '<pre><span class="api-json">$data = [\n' +
+                                '    \'tile_id\' => \'database_conn\',\n' +
+                                '    \'title\' => \'Database Connections\',\n' +
+                                '    \'icon\' => \'🗄️\',\n' +
+                                '    \'value\' => \'24\',\n' +
+                                '    \'status\' => \'info\',\n' +
+                                '    \'status_text\' => \'Active\'\n' +
+                                '];\n\n' +
+                                '$json = json_encode($data);\n' +
+                                '$context = stream_context_create([\n' +
+                                '    \'http\' => [\n' +
+                                '        \'method\' => \'POST\',\n' +
+                                '        \'header\' => \'Content-Type: application/json\',\n' +
+                                '        \'content\' => $json\n' +
+                                '    ]\n' +
+                                ']);\n\n</span>' +
+                                '<span class="api-url">file_get_contents(\'http://localhost:3000/api/tiles\', false, $context);</span></pre>' +
+                            '</div>' +
+                        '</div>';
+                    
+                    dashboard.appendChild(noTilesDiv);
+                    
+                    // Initialize API tab functionality after content is loaded
+                    initApiTabs();
+                }
+
+                lastUpdateTime = new Date();
+                updateTime();
+
+            } catch (error) {
+                console.error('Error loading tiles:', error);
+                updateConnectionStatus(false);
+                
+                const dashboard = document.getElementById('dashboard');
+                dashboard.innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">🔌</div>
+                        <h3>Connection Error</h3>
+                        <p>Unable to connect to the wallboard server</p>
+                        <div class="retry-info">Retrying automatically in ${REFRESH_INTERVAL / 1000} seconds...</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Load dashboard settings
+        async function loadSettings() {
+            try {
+                const response = await fetch(`${API_BASE}/api/settings`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.settings && data.settings.dashboard_title) {
+                        document.getElementById('dashboardTitle').textContent = data.settings.dashboard_title;
+                        document.title = data.settings.dashboard_title;
+                    }
+                }
+            } catch (error) {
+                console.log('Could not load settings, using defaults');
+            }
+        }
+
+        // Show API example tab
+        function showApiExample(type) {
+            // Hide all examples
+            document.querySelectorAll('.api-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.api-tab').forEach(el => el.classList.remove('active'));
+            
+            // Show selected example
+            document.getElementById(type + '-example').style.display = 'block';
+            
+            // Find and activate the clicked tab
+            document.querySelectorAll('.api-tab').forEach(el => {
+                if (el.getAttribute('data-tab') === type) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        // Add event listeners for API tabs (done after content is loaded)
+        function initApiTabs() {
+            document.querySelectorAll('.api-tab').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabType = this.getAttribute('data-tab');
+                    showApiExample(tabType);
+                });
+            });
+        }
+
+        // Initialize dashboard
+        updateConnectionStatus(false);
+        loadSettings();
+        loadTiles();
+
+        // Auto-refresh tiles
+        setInterval(loadTiles, REFRESH_INTERVAL);
+
+        // Update time display every second
+        setInterval(updateTime, 1000);
+
+        console.log('🚀 ICT Wallboard loaded');
+        console.log(`🔄 Auto-refresh every ${REFRESH_INTERVAL / 1000} seconds`);
+    </script>
+</body>
+</html>
