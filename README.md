@@ -286,3 +286,54 @@ For issues or questions, check the logs:
 - Database: Located at `data/wallboard.db`
 
 The system is designed to be robust - if external data feeds fail, tiles will auto-expire and disappear rather than showing stale data.
+
+## Quick curl Examples
+
+Use these `curl` examples to add, update, and remove test tiles from the running wallboard (assumes `http://localhost:3000`).
+
+- Create a new tile:
+
+```bash
+curl -s -X POST http://localhost:3000/api/add \
+   -H "Content-Type: application/json" \
+   -d '{
+      "id": "test-001",
+      "title": "Build Queue",
+      "icon": "🔧",
+      "value": "3 builds",
+      "sub_value": "2 failing",
+      "status": "warning",
+      "status_text": "Investigate",
+      "current_value": 3,
+      "max_value": 10,
+      "priority": 10,
+      "auto_expire": true
+   }'
+```
+
+- Update the same tile (send `id` again):
+
+```bash
+curl -s -X POST http://localhost:3000/api/add \
+   -H "Content-Type: application/json" \
+   -d '{
+      "id": "test-001",
+      "title": "Build Queue (updated)",
+      "value": "1 build",
+      "sub_value": "All passing",
+      "status": "info",
+      "status_text": "OK",
+      "current_value": 1,
+      "max_value": 10,
+      "priority": 5,
+      "auto_expire": false
+   }'
+```
+
+- Remove a tile (mark inactive):
+
+```bash
+curl -s -X DELETE http://localhost:3000/api/remove/test-001
+```
+
+These are safe to run repeatedly for testing; re-posting the same `id` updates the existing tile.
