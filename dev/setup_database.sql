@@ -28,7 +28,10 @@ CREATE TABLE IF NOT EXISTS tiles (
     
     -- Tile Priority and Ordering
     priority INTEGER DEFAULT 50,                  -- Custom priority (1-100, lower = higher priority)
-    
+
+    -- Layout
+    size VARCHAR(10) DEFAULT '1x1',                -- Grid footprint: '1x1', '2x1', '1x2', '2x2'
+
     -- Metadata
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,

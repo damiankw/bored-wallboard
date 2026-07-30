@@ -31,7 +31,22 @@ let setupRequired = false;
 try {
     db = new sqlite3.Database(dbPath);
     console.log('- Connected to SQLite database');
-    
+
+    // Migration: add `size` column to tiles if an older DB predates it
+    db.all("PRAGMA table_info(tiles)", [], (err, columns) => {
+        if (err) return;
+        const hasSize = columns.some(col => col.name === 'size');
+        if (!hasSize && columns.length > 0) {
+            db.run("ALTER TABLE tiles ADD COLUMN size VARCHAR(10) DEFAULT '1x1'", (alterErr) => {
+                if (alterErr) {
+                    console.error('- Migration failed (add size column):', alterErr.message);
+                } else {
+                    console.log('- Migrated tiles table: added size column');
+                }
+            });
+        }
+    });
+
     // Check if setup is required
     if (!databaseExists) {
         setupRequired = true;
@@ -285,14 +300,23 @@ app.post('/api/add', (req, res) => {
         current_value = 0,
         max_value = 100,
         priority = 50,
-        auto_expire = true
+        auto_expire = true,
+        size = '1x1'
     } = req.body;
 
     // Validation
     if (!id || !title || !value) {
-        return res.status(400).json({ 
-            error: 'Missing required fields', 
-            required: ['id', 'title', 'value'] 
+        return res.status(400).json({
+            error: 'Missing required fields',
+            required: ['id', 'title', 'value']
+        });
+    }
+
+    const validSizes = ['1x1', '2x1', '1x2', '2x2'];
+    if (!validSizes.includes(size)) {
+        return res.status(400).json({
+            error: 'Invalid size',
+            allowed: validSizes
         });
     }
 
@@ -313,18 +337,18 @@ app.post('/api/add', (req, res) => {
         if (existingTile) {
             // Update existing tile
             const updateQuery = `
-                UPDATE tiles SET 
+                UPDATE tiles SET
                     title = ?, icon = ?, tile_type = ?, value = ?, sub_value = ?,
                     status = ?, status_text = ?, additional_info = ?,
-                    current_value = ?, max_value = ?, priority = ?,
+                    current_value = ?, max_value = ?, priority = ?, size = ?,
                     updated_at = ?, expires_at = ?, auto_expire = ?, is_active = 1
                 WHERE tile_id = ?
             `;
-            
+
             db.run(updateQuery, [
                 title, icon, tile_type, value, sub_value,
                 status, status_text, additional_info,
-                current_value, max_value, priority,
+                current_value, max_value, priority, size,
                 now, expires, auto_expire, id
             ], function(err) {
                 if (err) {
@@ -345,15 +369,15 @@ app.post('/api/add', (req, res) => {
                 INSERT INTO tiles (
                     tile_id, title, icon, tile_type, value, sub_value,
                     status, status_text, additional_info,
-                    current_value, max_value, priority,
+                    current_value, max_value, priority, size,
                     created_at, updated_at, expires_at, auto_expire, is_active
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
             `;
-            
+
             db.run(insertQuery, [
                 id, title, icon, tile_type, value, sub_value,
                 status, status_text, additional_info,
-                current_value, max_value, priority,
+                current_value, max_value, priority, size,
                 now, now, expires, auto_expire
             ], function(err) {
                 if (err) {
@@ -369,6 +393,40 @@ app.post('/api/add', (req, res) => {
                 });
             });
         }
+    });
+});
+
+// Resize a tile (change its grid footprint only)
+app.patch('/api/tiles/:id/size', (req, res) => {
+    const { id } = req.params;
+    const { size } = req.body;
+
+    const validSizes = ['1x1', '2x1', '1x2', '2x2'];
+    if (!validSizes.includes(size)) {
+        return res.status(400).json({
+            error: 'Invalid size',
+            allowed: validSizes
+        });
+    }
+
+    const query = 'UPDATE tiles SET size = ?, updated_at = ? WHERE tile_id = ?';
+
+    db.run(query, [size, new Date().toISOString(), id], function(err) {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ error: 'Database error', details: err.message });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Tile not found' });
+        }
+
+        res.json({
+            success: true,
+            message: 'Tile resized successfully',
+            tile_id: id,
+            size
+        });
     });
 });
 
