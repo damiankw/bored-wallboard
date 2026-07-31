@@ -11,8 +11,35 @@
             box-sizing: border-box;
         }
 
+        @font-face {
+            font-family: 'Inter';
+            src: url('/fonts/InterVariable.woff2') format('woff2-variations'),
+                 url('/fonts/InterVariable.woff2') format('woff2');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* "SF Distant Galaxy" - Star Wars-style display font (ShyFonts, freeware) */
+        @font-face {
+            font-family: 'SF Distant Galaxy';
+            src: url('/fonts/SFDistantGalaxy.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* "Back To The Future" - fan recreation of the movie's title lettering */
+        @font-face {
+            font-family: 'Back To The Future';
+            src: url('/fonts/BackToTheFuture.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
         :root {
-            --font-family: 'Segoe UI', system-ui, -apple-system, Tahoma, Geneva, Verdana, sans-serif;
+            --font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, Tahoma, Geneva, Verdana, sans-serif;
             --transition: 180ms ease;
         }
 
@@ -170,6 +197,92 @@
         }
 
         /* ============================================================
+           THEME: STAR WARS  (May the 4th — starfield HUD, lightsaber glow)
+           ============================================================ */
+        [data-theme="starwars"] {
+            --bg-page: #000000;
+            --bg-page-gradient:
+                radial-gradient(1px 1px at 10% 15%, #fff, transparent),
+                radial-gradient(1px 1px at 25% 45%, #fff, transparent),
+                radial-gradient(1px 1px at 40% 8%, #fff, transparent),
+                radial-gradient(1px 1px at 55% 65%, #fff, transparent),
+                radial-gradient(1px 1px at 70% 22%, #fff, transparent),
+                radial-gradient(1px 1px at 85% 55%, #fff, transparent),
+                radial-gradient(1px 1px at 15% 78%, #fff, transparent),
+                radial-gradient(1px 1px at 95% 85%, #fff, transparent),
+                radial-gradient(1px 1px at 5% 60%, #fff, transparent),
+                radial-gradient(1px 1px at 62% 92%, #fff, transparent),
+                radial-gradient(1px 1px at 33% 30%, #fff, transparent),
+                radial-gradient(1px 1px at 80% 5%, #fff, transparent),
+                radial-gradient(1px 1px at 48% 88%, #fff, transparent),
+                radial-gradient(1px 1px at 92% 35%, #fff, transparent),
+                radial-gradient(circle at 20% 15%, rgba(40, 70, 140, 0.28) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(120, 20, 20, 0.2) 0%, transparent 45%),
+                #000000;
+            --text-primary: #f5f5f0;
+            --text-secondary: rgba(245, 245, 240, 0.75);
+            --text-muted: rgba(245, 245, 240, 0.5);
+            --tile-radius: 6px;
+            --tile-shadow: 0 8px 26px rgba(0, 0, 0, 0.6);
+            --tile-hover-shadow: 0 14px 36px rgba(0, 0, 0, 0.7);
+            --panel-bg: rgba(10, 12, 20, 0.7);
+            --panel-border: rgba(255, 232, 31, 0.3);
+            --accent: #ffe81f;
+            --success: rgba(46, 204, 113, 0.16); --success-fg: #4ce07a; --success-glow: rgba(46, 204, 113, 0.55);
+            --warning: rgba(255, 158, 44, 0.16);  --warning-fg: #ffae42; --warning-glow: rgba(255, 158, 44, 0.55);
+            --error: rgba(230, 40, 40, 0.16);    --error-fg: #ff4c4c;  --error-glow: rgba(230, 40, 40, 0.6);
+            --info: rgba(60, 140, 255, 0.16);    --info-fg: #4fa3ff;   --info-glow: rgba(60, 140, 255, 0.55);
+        }
+
+        /* ============================================================
+           THEME: BACK TO THE FUTURE  (time-travel light trails, DeLorean chrome)
+           ============================================================ */
+        [data-theme="bttf"] {
+            --bg-page: #05060a;
+            --bg-page-gradient:
+                linear-gradient(115deg, transparent 0%, transparent 38%, rgba(255, 106, 0, 0.14) 40%, transparent 42%),
+                linear-gradient(115deg, transparent 0%, transparent 55%, rgba(255, 183, 0, 0.12) 57%, transparent 59%),
+                linear-gradient(115deg, transparent 0%, transparent 70%, rgba(255, 42, 42, 0.12) 72%, transparent 74%),
+                radial-gradient(circle at 15% 88%, rgba(0, 180, 255, 0.14) 0%, transparent 42%),
+                #05060a;
+            --text-primary: #f2f4f8;
+            --text-secondary: rgba(242, 244, 248, 0.75);
+            --text-muted: rgba(242, 244, 248, 0.5);
+            --tile-radius: 10px;
+            --tile-shadow: 0 8px 26px rgba(0, 0, 0, 0.55);
+            --tile-hover-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
+            --panel-bg: rgba(15, 18, 28, 0.65);
+            --panel-border: rgba(0, 217, 255, 0.28);
+            --accent: #ff6a00;
+            --success: rgba(57, 211, 83, 0.18); --success-fg: #6ee787; --success-glow: rgba(57, 211, 83, 0.55);
+            --warning: rgba(255, 176, 0, 0.2);  --warning-fg: #ffcf5c; --warning-glow: rgba(255, 176, 0, 0.6);
+            --error: rgba(255, 59, 48, 0.2);    --error-fg: #ff8c82;  --error-glow: rgba(255, 59, 48, 0.6);
+            --info: rgba(0, 217, 255, 0.2);     --info-fg: #7fe9ff;   --info-glow: rgba(0, 217, 255, 0.55);
+        }
+
+        /* ============================================================
+           THEME: MATRIX  (digital rain, monochrome-green terminal)
+           ============================================================ */
+        [data-theme="matrix"] {
+            --font-family: 'Consolas', 'Courier New', monospace;
+            --bg-page: #000000;
+            --bg-page-gradient: #000000;
+            --text-primary: #d6ffe0;
+            --text-secondary: rgba(214, 255, 224, 0.75);
+            --text-muted: rgba(214, 255, 224, 0.5);
+            --tile-radius: 4px;
+            --tile-shadow: 0 8px 26px rgba(0, 0, 0, 0.7);
+            --tile-hover-shadow: 0 14px 36px rgba(0, 0, 0, 0.8);
+            --panel-bg: rgba(0, 20, 8, 0.55);
+            --panel-border: rgba(0, 255, 65, 0.35);
+            --accent: #00ff41;
+            --success: rgba(0, 255, 65, 0.16);  --success-fg: #00ff41; --success-glow: rgba(0, 255, 65, 0.6);
+            --warning: rgba(180, 255, 60, 0.16); --warning-fg: #b4ff3c; --warning-glow: rgba(180, 255, 60, 0.55);
+            --error: rgba(255, 60, 60, 0.16);   --error-fg: #ff5050;   --error-glow: rgba(255, 60, 60, 0.6);
+            --info: rgba(0, 230, 200, 0.16);    --info-fg: #00e6c8;    --info-glow: rgba(0, 230, 200, 0.55);
+        }
+
+        /* ============================================================
            THEME: RETRO  (green-phosphor terminal, scanlines, monospace)
            ============================================================ */
         [data-theme="retro"] {
@@ -198,25 +311,25 @@
             padding: 24px;
             overflow-x: hidden;
             min-height: 100vh;
+            letter-spacing: -0.011em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             transition: background var(--transition), color var(--transition);
         }
 
         .header {
             text-align: center;
             margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .header h1 {
             font-size: 2.4rem;
             font-weight: 300;
-            letter-spacing: 0.5px;
+            letter-spacing: -0.02em;
         }
 
-        .header .hint {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 6px;
-        }
 
         /* ---------- Flowing grid ---------- */
         .dashboard {
@@ -224,9 +337,11 @@
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             grid-auto-rows: 250px;
             grid-auto-flow: dense;
-            gap: 20px;
+            gap: 10px;
             max-width: 1600px;
             margin: 30px auto 0;
+            position: relative;
+            z-index: 1;
         }
 
         .tile {
@@ -252,28 +367,6 @@
         .tile[data-size="1x2"] .tile-value { font-size: 3.4rem; }
         .tile[data-size="2x2"] .tile-value { font-size: 4.6rem; }
 
-        .resize-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 0.65rem;
-            padding: 3px 7px;
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.25);
-            color: rgba(255, 255, 255, 0.75);
-            pointer-events: none;
-        }
-        [data-theme="minimal"] .resize-badge,
-        [data-theme="highcontrast"] .resize-badge {
-            background: rgba(0, 0, 0, 0.08);
-            color: rgba(0, 0, 0, 0.55);
-        }
-        [data-theme="highcontrast"] .resize-badge {
-            background: #ffffff;
-            color: #000000;
-            border: 1px solid #000000;
-        }
-
         /* ---------- Flat-family tile fills (solid color): flat, high contrast ---------- */
         [data-theme="flat"] .tile.success,
         [data-theme="highcontrast"] .tile.success { background: var(--success); color: var(--success-fg); }
@@ -286,18 +379,21 @@
 
         [data-theme="highcontrast"] .tile { border: 3px solid #ffffff; font-weight: 600; }
 
-        /* ---------- Glass-family tile fills (translucent + glow): glass, neon, sunrise ---------- */
+        /* ---------- Glass-family tile fills (translucent + glow): glass, neon, sunrise, starwars, bttf, matrix ---------- */
         [data-theme="glass"] .tile,
         [data-theme="neon"] .tile,
-        [data-theme="sunrise"] .tile {
+        [data-theme="sunrise"] .tile,
+        [data-theme="starwars"] .tile,
+        [data-theme="bttf"] .tile,
+        [data-theme="matrix"] .tile {
             border: 1px solid var(--panel-border);
             backdrop-filter: blur(18px) saturate(140%);
             -webkit-backdrop-filter: blur(18px) saturate(140%);
         }
-        [data-theme="glass"] .tile.success, [data-theme="neon"] .tile.success, [data-theme="sunrise"] .tile.success { background: var(--success); box-shadow: 0 0 0 1px var(--success-glow), var(--tile-shadow); }
-        [data-theme="glass"] .tile.warning, [data-theme="neon"] .tile.warning, [data-theme="sunrise"] .tile.warning { background: var(--warning); box-shadow: 0 0 0 1px var(--warning-glow), var(--tile-shadow); }
-        [data-theme="glass"] .tile.error,   [data-theme="neon"] .tile.error,   [data-theme="sunrise"] .tile.error   { background: var(--error);   box-shadow: 0 0 0 1px var(--error-glow), var(--tile-shadow); }
-        [data-theme="glass"] .tile.info,    [data-theme="neon"] .tile.info,    [data-theme="sunrise"] .tile.info    { background: var(--info);    box-shadow: 0 0 0 1px var(--info-glow), var(--tile-shadow); }
+        [data-theme="glass"] .tile.success, [data-theme="neon"] .tile.success, [data-theme="sunrise"] .tile.success, [data-theme="starwars"] .tile.success, [data-theme="bttf"] .tile.success, [data-theme="matrix"] .tile.success { background: var(--success); box-shadow: 0 0 0 1px var(--success-glow), var(--tile-shadow); }
+        [data-theme="glass"] .tile.warning, [data-theme="neon"] .tile.warning, [data-theme="sunrise"] .tile.warning, [data-theme="starwars"] .tile.warning, [data-theme="bttf"] .tile.warning, [data-theme="matrix"] .tile.warning { background: var(--warning); box-shadow: 0 0 0 1px var(--warning-glow), var(--tile-shadow); }
+        [data-theme="glass"] .tile.error,   [data-theme="neon"] .tile.error,   [data-theme="sunrise"] .tile.error,   [data-theme="starwars"] .tile.error,   [data-theme="bttf"] .tile.error,   [data-theme="matrix"] .tile.error   { background: var(--error);   box-shadow: 0 0 0 1px var(--error-glow), var(--tile-shadow); }
+        [data-theme="glass"] .tile.info,    [data-theme="neon"] .tile.info,    [data-theme="sunrise"] .tile.info,    [data-theme="starwars"] .tile.info,    [data-theme="bttf"] .tile.info,    [data-theme="matrix"] .tile.info    { background: var(--info);    box-shadow: 0 0 0 1px var(--info-glow), var(--tile-shadow); }
 
         /* ---------- Card-family tile fills (left accent bar): minimal, slate ---------- */
         [data-theme="minimal"] .tile,
@@ -325,6 +421,41 @@
         [data-theme="retro"] .tile-value,
         [data-theme="retro"] .tile-title,
         [data-theme="retro"] .header h1 { text-shadow: 0 0 8px currentColor; }
+        [data-theme="starwars"] .header h1 {
+            font-family: 'SF Distant Galaxy', var(--font-family);
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 2.6rem;
+            letter-spacing: 0.03em;
+            text-shadow: 0 0 20px rgba(255, 232, 31, 0.6), 0 0 46px rgba(255, 232, 31, 0.3);
+        }
+        [data-theme="starwars"] .tile-title {
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+        }
+
+        [data-theme="bttf"] .header h1 {
+            font-family: 'Back To The Future', var(--font-family);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            background: linear-gradient(180deg, #fff6d0 0%, #ffcf5c 25%, #ff9a3c 55%, #ff3b3b 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 14px rgba(255, 106, 0, 0.55));
+        }
+        [data-theme="bttf"] .tile-title {
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            font-weight: 700;
+        }
+
+        [data-theme="matrix"] .header h1 {
+            color: var(--accent);
+            text-shadow: 0 0 16px rgba(0, 255, 65, 0.7), 0 0 34px rgba(0, 255, 65, 0.4);
+        }
+
         [data-theme="retro"] .tile-progress { background: rgba(51, 255, 102, 0.12); border: 1px solid var(--panel-border); }
         [data-theme="retro"] .progress-wheel-bg { stroke: rgba(51, 255, 102, 0.15); }
         [data-theme="retro"] body::before {
@@ -351,8 +482,19 @@
         }
 
         .tile-icon {
-            font-size: 1.5rem;
+            display: inline-flex;
             opacity: 0.85;
+            flex-shrink: 0;
+        }
+        .tile-icon svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+        .tile[data-size="2x2"] .tile-icon svg,
+        .tile[data-size="1x2"] .tile-icon svg {
+            width: 26px;
+            height: 26px;
         }
 
         .tile-value {
@@ -360,6 +502,7 @@
             font-weight: 700;
             margin-bottom: 8px;
             line-height: 1.1;
+            letter-spacing: -0.02em;
         }
 
         .tile-subtitle {
@@ -448,6 +591,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             display: block;
+            letter-spacing: -0.02em;
         }
 
         .progress-wheel-label {
@@ -455,6 +599,119 @@
             opacity: 0.7;
             display: block;
             margin-top: 2px;
+        }
+
+        /* ---------- Gauge (semicircle) ---------- */
+        .gauge {
+            position: relative;
+            width: 140px;
+            height: 82px;
+            margin: 8px auto 4px;
+            flex-shrink: 0;
+        }
+        .gauge svg { width: 100%; height: 100%; overflow: visible; }
+        .gauge-bg { fill: none; stroke: rgba(0, 0, 0, 0.2); stroke-width: 10; }
+        [data-theme="minimal"] .gauge-bg, [data-theme="slate"] .gauge-bg { stroke: rgba(0, 0, 0, 0.08); }
+        .gauge-fill { fill: none; stroke: currentColor; stroke-width: 10; stroke-linecap: round; }
+        .gauge-text { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); text-align: center; }
+        .gauge-percentage { font-size: 1.4rem; font-weight: 700; display: block; letter-spacing: -0.02em; }
+        .gauge-label { font-size: 0.7rem; opacity: 0.7; display: block; margin-top: 2px; }
+
+        /* ---------- Sparkline ---------- */
+        .sparkline { width: 100%; height: 40px; margin: 6px 0 10px; flex-shrink: 0; }
+        .sparkline svg { width: 100%; height: 100%; display: block; }
+        .sparkline polyline { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; }
+
+        /* ---------- List ---------- */
+        .list-items { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; margin: 4px 0 10px; }
+        .list-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 0.88rem;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        [data-theme="minimal"] .list-row { border-bottom-color: rgba(0, 0, 0, 0.08); }
+        [data-theme="retro"] .list-row { border-bottom-color: rgba(51, 255, 102, 0.15); }
+        .list-row:last-child { border-bottom: none; }
+        .list-row-label { opacity: 0.9; }
+        .list-row-value { font-weight: 600; opacity: 0.95; flex-shrink: 0; }
+        .list-row-empty { opacity: 0.5; font-style: italic; }
+
+        /* ---------- Countdown ---------- */
+        .countdown-expired { opacity: 0.6; text-decoration: line-through; }
+
+        /* ---------- Delta ---------- */
+        .delta-row { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .delta-subtitle { margin-bottom: 0; }
+        .delta-indicator { font-size: 0.85rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: rgba(0, 0, 0, 0.15); }
+        [data-theme="minimal"] .delta-indicator { background: rgba(0, 0, 0, 0.05); }
+        .delta-up { color: #4ade80; }
+        .delta-down { color: #f87171; }
+
+        /* ---------- Traffic light ---------- */
+        .traffic-light-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+        .traffic-dot {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        }
+        .traffic-status-text { font-size: 1.15rem; font-weight: 700; }
+        /* Card-family themes (neutral tile background): dot carries the solid status hue */
+        [data-theme="minimal"] .tile.success .traffic-dot, [data-theme="slate"] .tile.success .traffic-dot, [data-theme="retro"] .tile.success .traffic-dot { background: var(--success); box-shadow: 0 0 16px var(--success); }
+        [data-theme="minimal"] .tile.warning .traffic-dot, [data-theme="slate"] .tile.warning .traffic-dot, [data-theme="retro"] .tile.warning .traffic-dot { background: var(--warning); box-shadow: 0 0 16px var(--warning); }
+        [data-theme="minimal"] .tile.error .traffic-dot,   [data-theme="slate"] .tile.error .traffic-dot,   [data-theme="retro"] .tile.error .traffic-dot   { background: var(--error);   box-shadow: 0 0 16px var(--error); }
+        [data-theme="minimal"] .tile.info .traffic-dot,    [data-theme="slate"] .tile.info .traffic-dot,    [data-theme="retro"] .tile.info .traffic-dot    { background: var(--info);    box-shadow: 0 0 16px var(--info); }
+        /* Glass-family themes: base hue var is a low-alpha fill, so use the brighter -fg variant instead */
+        [data-theme="glass"] .tile.success .traffic-dot, [data-theme="neon"] .tile.success .traffic-dot, [data-theme="sunrise"] .tile.success .traffic-dot, [data-theme="starwars"] .tile.success .traffic-dot, [data-theme="bttf"] .tile.success .traffic-dot, [data-theme="matrix"] .tile.success .traffic-dot { background: var(--success-fg); box-shadow: 0 0 16px var(--success-fg); }
+        [data-theme="glass"] .tile.warning .traffic-dot, [data-theme="neon"] .tile.warning .traffic-dot, [data-theme="sunrise"] .tile.warning .traffic-dot, [data-theme="starwars"] .tile.warning .traffic-dot, [data-theme="bttf"] .tile.warning .traffic-dot, [data-theme="matrix"] .tile.warning .traffic-dot { background: var(--warning-fg); box-shadow: 0 0 16px var(--warning-fg); }
+        [data-theme="glass"] .tile.error .traffic-dot,   [data-theme="neon"] .tile.error .traffic-dot,   [data-theme="sunrise"] .tile.error .traffic-dot,   [data-theme="starwars"] .tile.error .traffic-dot,   [data-theme="bttf"] .tile.error .traffic-dot,   [data-theme="matrix"] .tile.error .traffic-dot   { background: var(--error-fg);   box-shadow: 0 0 16px var(--error-fg); }
+        [data-theme="glass"] .tile.info .traffic-dot,    [data-theme="neon"] .tile.info .traffic-dot,    [data-theme="sunrise"] .tile.info .traffic-dot,    [data-theme="starwars"] .tile.info .traffic-dot,    [data-theme="bttf"] .tile.info .traffic-dot,    [data-theme="matrix"] .tile.info .traffic-dot    { background: var(--info-fg);    box-shadow: 0 0 16px var(--info-fg); }
+
+        /* ---------- Ticker ---------- */
+        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; margin: 4px 0 10px; }
+        .ticker-track { display: flex; white-space: nowrap; animation: ticker-scroll 18s linear infinite; }
+        .ticker-segment { padding-right: 40px; font-size: 1.05rem; font-weight: 600; }
+        @keyframes ticker-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* ---------- Matrix digital rain (only built/shown for the matrix theme) ---------- */
+        .matrix-rain {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: #000;
+            pointer-events: none;
+        }
+        .matrix-rain.active { display: block; }
+        .matrix-rain-col {
+            position: absolute;
+            top: -100%;
+            width: 22px;
+            text-align: center;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.05;
+            color: #00ff41;
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.8);
+            white-space: pre;
+            opacity: 0.85;
+            animation-name: matrix-fall;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 80%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 80%, transparent 100%);
+        }
+        @keyframes matrix-fall {
+            from { transform: translateY(0%); }
+            to { transform: translateY(200%); }
         }
 
         /* ---------- Loading / error / empty states ----------
@@ -535,6 +792,8 @@
         .update-time {
             text-align: center;
             margin-top: 30px;
+            position: relative;
+            z-index: 1;
             color: var(--text-muted);
             font-size: 0.9rem;
         }
@@ -594,6 +853,8 @@
     </style>
 </head>
 <body>
+    <div class="matrix-rain" id="matrixRain"></div>
+
     <div class="theme-switcher" id="themeSwitcher">
         <button class="theme-btn" data-theme-choice="flat">Flat</button>
         <button class="theme-btn" data-theme-choice="glass">Glass</button>
@@ -603,6 +864,9 @@
         <button class="theme-btn" data-theme-choice="highcontrast">High Contrast</button>
         <button class="theme-btn" data-theme-choice="sunrise">Sunrise</button>
         <button class="theme-btn" data-theme-choice="retro">Retro</button>
+        <button class="theme-btn" data-theme-choice="starwars">Star Wars</button>
+        <button class="theme-btn" data-theme-choice="bttf">Back to the Future</button>
+        <button class="theme-btn" data-theme-choice="matrix">Matrix</button>
     </div>
 
     <div class="connection-status" id="connectionStatus">
@@ -611,7 +875,6 @@
 
     <div class="header">
         <h1 id="dashboardTitle">Bored Wallboard</h1>
-        <div class="hint">Double-click any tile to cycle its size (1x1 → 2x1 → 1x2 → 2x2)</div>
     </div>
 
     <div class="dashboard" id="dashboard">
@@ -634,6 +897,79 @@
         let lastUpdateTime = null;
         let connectionOnline = true;
 
+        // ---------------- Icon system ----------------
+        // Monochrome line icons (stroke=currentColor) so every icon automatically
+        // matches its tile's status color and the active theme, instead of
+        // relying on colorful, inconsistently-rendered emoji.
+        const ICON_PATHS = {
+            chart: '<line x1="6" y1="20" x2="6" y2="11"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="14"/>',
+            ticket: '<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1.2a1.6 1.6 0 0 0 0 3.2V14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1.6a1.6 1.6 0 0 0 0-3.2Z"/><line x1="9" y1="6.5" x2="9" y2="17" stroke-dasharray="2 2"/>',
+            rocket: '<path d="M12 2v14"/><path d="M7 9 12 2 17 9"/><path d="M9 16 7 20"/><path d="M15 16 17 20"/>',
+            disk: '<rect x="3" y="6" width="18" height="12" rx="2"/><line x1="3" y1="14" x2="21" y2="14"/><circle cx="7.5" cy="17.5" r="0.8" fill="currentColor" stroke="none"/><circle cx="11.5" cy="17.5" r="0.8" fill="currentColor" stroke="none"/>',
+            activity: '<path d="M3 12h4l2-7 4 14 2-7h6"/>',
+            database: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+            server: '<rect x="3" y="4" width="18" height="12" rx="1"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/>',
+            'alert-circle': '<circle cx="12" cy="12" r="9"/><line x1="12" y1="7" x2="12" y2="13"/><circle cx="12" cy="16.5" r="0.9" fill="currentColor" stroke="none"/>',
+            'git-branch': '<circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8"/><path d="M18 8a6 6 0 0 1-6 6h-2"/>',
+            flask: '<path d="M9 3h6"/><path d="M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3L14 9V3"/><line x1="7.5" y1="15" x2="16.5" y2="15"/>',
+            clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',
+            smile: '<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="0.9" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="0.9" fill="currentColor" stroke="none"/>',
+            'alert-triangle': '<path d="M12 3 22 20H2Z"/><line x1="12" y1="9" x2="12" y2="14"/><circle cx="12" cy="17" r="0.9" fill="currentColor" stroke="none"/>',
+            lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+            shield: '<path d="M12 3 19 6v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6Z"/>',
+            bug: '<circle cx="12" cy="13" r="5"/><line x1="12" y1="8" x2="12" y2="10"/><path d="M9 9 7 6"/><path d="M15 9 17 6"/><path d="M4 13h3"/><path d="M17 13h3"/><path d="M6 18l3-2"/><path d="M18 18l-3-2"/>',
+            'dollar-sign': '<line x1="12" y1="2" x2="12" y2="22"/><path d="M17 6.5c0-1.9-2.2-3.5-5-3.5s-5 1.4-5 3.2c0 1.8 1.8 2.6 5 3.3 3.2.7 5 1.7 5 3.5S14.8 17 12 17s-5-1.4-5-3.3"/>',
+            'user-plus': '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.5 2.5-6 5.5-6s5.5 2.5 5.5 6"/><line x1="18" y1="8" x2="18" y2="14"/><line x1="15" y1="11" x2="21" y2="11"/>',
+            users: '<circle cx="8.5" cy="8" r="3"/><path d="M2.5 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M14.8 20c.1-2.6 1.8-4.7 3.7-5.4"/>',
+            wifi: '<path d="M4 9a13 13 0 0 1 16 0"/><path d="M7.5 12.8a8.5 8.5 0 0 1 9 0"/><path d="M11 16.5a3.5 3.5 0 0 1 2 0"/><circle cx="12" cy="19.5" r="0.9" fill="currentColor" stroke="none"/>',
+            globe: '<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3c2.7 2.5 4.2 6 4.2 9s-1.5 6.5-4.2 9c-2.7-2.5-4.2-6-4.2-9s1.5-6.5 4.2-9Z"/>',
+            bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5"/><path d="M4 16h16l-1.5 3H5.5Z"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+            'check-circle': '<circle cx="12" cy="12" r="9"/><path d="M8 12.5 11 15.5 16 9"/>'
+        };
+
+        // Legacy tiles (and the demo data) still store an emoji in `icon` — map the
+        // ones in use to a line-icon key so old data upgrades automatically.
+        const EMOJI_TO_ICON = {
+            '📊': 'chart', '🎫': 'ticket', '🚀': 'rocket', '💾': 'disk',
+            '🏃': 'activity', '🗄️': 'database', '🖥️': 'server', '🔴': 'alert-circle',
+            '🔀': 'git-branch', '🧪': 'flask', '⏱️': 'clock', '😊': 'smile',
+            '🚨': 'alert-triangle', '🔒': 'lock', '🛡️': 'shield', '🐛': 'bug',
+            '💰': 'dollar-sign', '🆕': 'user-plus', '👥': 'users', '📶': 'wifi',
+            '🌐': 'globe', '📟': 'bell', '✅': 'check-circle'
+        };
+
+        function renderTileIcon(rawIcon) {
+            const key = ICON_PATHS[rawIcon] ? rawIcon : (EMOJI_TO_ICON[rawIcon] || 'chart');
+            const paths = ICON_PATHS[key];
+            return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+        }
+
+        // ---------------- Matrix digital rain ----------------
+        // Built once (lazily, on first switch to the theme) as static CSS-animated
+        // columns rather than a per-frame render loop - cheap, and only ever
+        // shown while the matrix theme is actually active.
+        const MATRIX_RAIN_CHARS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
+
+        function buildMatrixRain() {
+            const container = document.getElementById('matrixRain');
+            if (container.dataset.built) return;
+            const columns = 46;
+            let html = '';
+            for (let i = 0; i < columns; i++) {
+                const left = (i / columns) * 100;
+                const duration = (6 + Math.random() * 6).toFixed(2);
+                const delay = (Math.random() * -12).toFixed(2);
+                const len = 18 + Math.floor(Math.random() * 14);
+                let text = '';
+                for (let j = 0; j < len; j++) {
+                    text += MATRIX_RAIN_CHARS[Math.floor(Math.random() * MATRIX_RAIN_CHARS.length)] + '\n';
+                }
+                html += `<div class="matrix-rain-col" style="left:${left}%; animation-duration:${duration}s; animation-delay:${delay}s;">${text}</div>`;
+            }
+            container.innerHTML = html;
+            container.dataset.built = 'true';
+        }
+
         // ---------------- Theme handling ----------------
         function applyTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
@@ -641,6 +977,14 @@
             document.querySelectorAll('.theme-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.themeChoice === theme);
             });
+
+            const rain = document.getElementById('matrixRain');
+            if (theme === 'matrix') {
+                buildMatrixRain();
+                rain.classList.add('active');
+            } else {
+                rain.classList.remove('active');
+            }
         }
 
         function initThemeSwitcher() {
@@ -649,6 +993,24 @@
             document.querySelectorAll('.theme-btn').forEach(btn => {
                 btn.addEventListener('click', () => applyTheme(btn.dataset.themeChoice));
             });
+        }
+
+        // Format the time remaining until target_date for the countdown tile.
+        // Purely a client-side computation from the datetime the caller sent -
+        // nothing is tracked or accumulated between updates.
+        function formatCountdown(targetDateStr) {
+            if (!targetDateStr) return { text: '—', expired: false };
+            const target = new Date(targetDateStr).getTime();
+            if (isNaN(target)) return { text: 'Invalid date', expired: false };
+            const diff = target - Date.now();
+            if (diff <= 0) return { text: 'Expired', expired: true };
+            const totalMinutes = Math.floor(diff / 60000);
+            const days = Math.floor(totalMinutes / 1440);
+            const hours = Math.floor((totalMinutes % 1440) / 60);
+            const minutes = totalMinutes % 60;
+            if (days > 0) return { text: `${days}d ${hours}h`, expired: false };
+            if (hours > 0) return { text: `${hours}h ${minutes}m`, expired: false };
+            return { text: `${minutes}m`, expired: false };
         }
 
         // Update timestamp
@@ -707,10 +1069,9 @@
                 const offset = circumference - (percentage / 100) * circumference;
 
                 content = `
-                    <span class="resize-badge">${size}</span>
                     <div class="tile-header">
                         <span class="tile-title">${tile.title}</span>
-                        <span class="tile-icon">${tile.icon}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
                     </div>
                     <div class="progress-wheel">
                         <svg>
@@ -733,10 +1094,9 @@
                 const percentage = tile.max_value > 0 ? Math.round((tile.current_value / tile.max_value) * 100) : 0;
 
                 content = `
-                    <span class="resize-badge">${size}</span>
                     <div class="tile-header">
                         <span class="tile-title">${tile.title}</span>
-                        <span class="tile-icon">${tile.icon}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
                     </div>
                     <div class="tile-value">${tile.value}</div>
                     <div class="tile-subtitle">${tile.sub_value}</div>
@@ -748,13 +1108,163 @@
                         <span>${tile.additional_info}</span>
                     </div>
                 `;
+            } else if (tile.tile_type === 'gauge') {
+                const percentage = tile.max_value > 0 ? Math.max(0, Math.min(100, Math.round((tile.current_value / tile.max_value) * 100))) : 0;
+                const halfCirc = Math.PI * 50;
+                const offset = halfCirc - (percentage / 100) * halfCirc;
+
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
+                    </div>
+                    <div class="gauge">
+                        <svg viewBox="0 0 120 70">
+                            <path class="gauge-bg" d="M10 60 A50 50 0 0 1 110 60"></path>
+                            <path class="gauge-fill" d="M10 60 A50 50 0 0 1 110 60"
+                                  stroke-dasharray="${halfCirc.toFixed(2)} ${halfCirc.toFixed(2)}"
+                                  stroke-dashoffset="${offset.toFixed(2)}"></path>
+                        </svg>
+                        <div class="gauge-text">
+                            <span class="gauge-percentage">${percentage}%</span>
+                            <span class="gauge-label">${tile.sub_value}</span>
+                        </div>
+                    </div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            } else if (tile.tile_type === 'sparkline') {
+                const data = Array.isArray(tile.sparkline_data) && tile.sparkline_data.length > 0 ? tile.sparkline_data : [0];
+                const min = Math.min(...data);
+                const max = Math.max(...data);
+                const range = max - min || 1;
+                const w = 100, h = 30;
+                const points = data.map((v, i) => {
+                    const x = data.length > 1 ? (i / (data.length - 1)) * w : 0;
+                    const y = h - ((v - min) / range) * h;
+                    return `${x.toFixed(1)},${y.toFixed(1)}`;
+                }).join(' ');
+
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
+                    </div>
+                    <div class="tile-value">${tile.value}</div>
+                    <div class="tile-subtitle">${tile.sub_value}</div>
+                    <div class="sparkline">
+                        <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+                            <polyline points="${points}"></polyline>
+                        </svg>
+                    </div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            } else if (tile.tile_type === 'list') {
+                const items = Array.isArray(tile.list_items) ? tile.list_items.slice(0, 6) : [];
+                const rows = items.map(item => {
+                    if (item && typeof item === 'object') {
+                        return `<div class="list-row"><span class="list-row-label">${item.label ?? ''}</span><span class="list-row-value">${item.value ?? ''}</span></div>`;
+                    }
+                    return `<div class="list-row"><span class="list-row-label">${item}</span></div>`;
+                }).join('');
+
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
+                    </div>
+                    <div class="list-items">${rows || '<div class="list-row list-row-empty">No items</div>'}</div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            } else if (tile.tile_type === 'countdown') {
+                const cd = formatCountdown(tile.target_date);
+
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
+                    </div>
+                    <div class="tile-value${cd.expired ? ' countdown-expired' : ''}">${cd.text}</div>
+                    <div class="tile-subtitle">${tile.sub_value}</div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            } else if (tile.tile_type === 'delta') {
+                const curr = Number(tile.current_value);
+                const prev = Number(tile.previous_value);
+                let deltaHtml = '';
+                if (!isNaN(curr) && !isNaN(prev) && prev !== 0) {
+                    const diff = curr - prev;
+                    const pct = (diff / Math.abs(prev)) * 100;
+                    const flat = diff === 0;
+                    const up = diff > 0;
+                    const arrow = flat ? '→' : (up ? '▲' : '▼');
+                    deltaHtml = `<span class="delta-indicator ${flat ? '' : (up ? 'delta-up' : 'delta-down')}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>`;
+                }
+
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
+                    </div>
+                    <div class="tile-value">${tile.value}</div>
+                    <div class="delta-row">${deltaHtml}<span class="tile-subtitle delta-subtitle">${tile.sub_value}</span></div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            } else if (tile.tile_type === 'traffic_light') {
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
+                    </div>
+                    <div class="traffic-light-body">
+                        <span class="traffic-dot"></span>
+                        <span class="traffic-status-text">${tile.status_text}</span>
+                    </div>
+                    <div class="tile-footer">
+                        <span>${tile.sub_value}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
+            } else if (tile.tile_type === 'ticker') {
+                const items = Array.isArray(tile.list_items) && tile.list_items.length > 0 ? tile.list_items : [tile.value];
+                const text = items.map(i => (i && typeof i === 'object') ? `${i.label ?? ''}${i.value ? ': ' + i.value : ''}` : i).join('   •   ');
+
+                content = `
+                    <div class="tile-header">
+                        <span class="tile-title">${tile.title}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
+                    </div>
+                    <div class="ticker-wrap">
+                        <div class="ticker-track">
+                            <span class="ticker-segment">${text}</span>
+                            <span class="ticker-segment">${text}</span>
+                        </div>
+                    </div>
+                    <div class="tile-footer">
+                        <span><span class="status-indicator"></span>${tile.status_text}</span>
+                        <span>${tile.additional_info}</span>
+                    </div>
+                `;
             } else {
                 // Standard tile
                 content = `
-                    <span class="resize-badge">${size}</span>
                     <div class="tile-header">
                         <span class="tile-title">${tile.title}</span>
-                        <span class="tile-icon">${tile.icon}</span>
+                        <span class="tile-icon">${renderTileIcon(tile.icon)}</span>
                     </div>
                     <div class="tile-value">${tile.value}</div>
                     <div class="tile-subtitle">${tile.sub_value}</div>
@@ -798,7 +1308,7 @@
                     noTilesDiv.innerHTML =
                         '<div class="no-tiles-icon">📊</div>' +
                         '<h3>No tiles available</h3>' +
-                        '<p>Your wallboard is ready! Add tiles using the API to start monitoring your systems.</p>' +
+                        '<p>Your wallboard is ready! Add tiles using the API to start monitoring your systems. Full reference: <code>API.md</code> in the project root.</p>' +
                         '<div class="api-examples">' +
                             '<div class="api-tabs">' +
                                 '<button class="api-tab active" data-tab="curl">cURL</button>' +
@@ -812,7 +1322,7 @@
                                 '  -d <span class="api-json">\'{\n' +
                                 '    "id": "server_cpu",\n' +
                                 '    "title": "Server CPU Usage",\n' +
-                                '    "icon": "💻",\n' +
+                                '    "icon": "server",\n' +
                                 '    "value": "75%",\n' +
                                 '    "status": "warning",\n' +
                                 '    "status_text": "Monitor",\n' +
@@ -824,7 +1334,7 @@
                                 '<pre><span class="api-json">$body = @{\n' +
                                 '    id = "network_status"\n' +
                                 '    title = "Network Status"\n' +
-                                '    icon = "🌐"\n' +
+                                '    icon = "globe"\n' +
                                 '    value = "Online"\n' +
                                 '    status = "success"\n' +
                                 '    status_text = "Healthy"\n' +
@@ -840,7 +1350,7 @@
                                 '<pre><span class="api-json">$data = [\n' +
                                 '    \'id\' => \'database_conn\',\n' +
                                 '    \'title\' => \'Database Connections\',\n' +
-                                '    \'icon\' => \'🗄️\',\n' +
+                                '    \'icon\' => \'database\',\n' +
                                 '    \'value\' => \'24\',\n' +
                                 '    \'status\' => \'info\',\n' +
                                 '    \'status_text\' => \'Active\',\n' +

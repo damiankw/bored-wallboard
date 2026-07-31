@@ -32,19 +32,30 @@ try {
     db = new sqlite3.Database(dbPath);
     console.log('- Connected to SQLite database');
 
-    // Migration: add `size` column to tiles if an older DB predates it
+    // Migration: add columns to tiles if an older DB predates them. Every
+    // column here is just the latest value the caller sent - nothing is
+    // computed or accumulated server-side (sparkline_data / list_items are
+    // JSON arrays the caller resends in full on every update; the wallboard
+    // itself keeps no history).
+    const MIGRATION_COLUMNS = [
+        { name: 'size', ddl: "ALTER TABLE tiles ADD COLUMN size VARCHAR(10) DEFAULT '1x1'" },
+        { name: 'sparkline_data', ddl: "ALTER TABLE tiles ADD COLUMN sparkline_data TEXT" },
+        { name: 'list_items', ddl: "ALTER TABLE tiles ADD COLUMN list_items TEXT" },
+        { name: 'target_date', ddl: "ALTER TABLE tiles ADD COLUMN target_date TEXT" },
+        { name: 'previous_value', ddl: "ALTER TABLE tiles ADD COLUMN previous_value REAL" }
+    ];
     db.all("PRAGMA table_info(tiles)", [], (err, columns) => {
-        if (err) return;
-        const hasSize = columns.some(col => col.name === 'size');
-        if (!hasSize && columns.length > 0) {
-            db.run("ALTER TABLE tiles ADD COLUMN size VARCHAR(10) DEFAULT '1x1'", (alterErr) => {
+        if (err || columns.length === 0) return;
+        const existing = new Set(columns.map(col => col.name));
+        MIGRATION_COLUMNS.filter(col => !existing.has(col.name)).forEach(col => {
+            db.run(col.ddl, (alterErr) => {
                 if (alterErr) {
-                    console.error('- Migration failed (add size column):', alterErr.message);
+                    console.error(`- Migration failed (add ${col.name} column):`, alterErr.message);
                 } else {
-                    console.log('- Migrated tiles table: added size column');
+                    console.log(`- Migrated tiles table: added ${col.name} column`);
                 }
             });
-        }
+        });
     });
 
     // Check if setup is required
@@ -240,22 +251,41 @@ app.get('/api/settings', (req, res) => {
     });
 });
 
+// sparkline_data / list_items are stored as JSON text; hand them back to
+// callers as real arrays instead of making every consumer double-parse.
+function parseJsonField(value) {
+    if (!value) return null;
+    try {
+        return JSON.parse(value);
+    } catch (e) {
+        return null;
+    }
+}
+
+function deserializeTile(row) {
+    return {
+        ...row,
+        sparkline_data: parseJsonField(row.sparkline_data),
+        list_items: parseJsonField(row.list_items)
+    };
+}
+
 // Get all active tiles
 app.get('/api/tiles', (req, res) => {
     const query = `
         SELECT * FROM active_tiles
     `;
-    
+
     db.all(query, [], (err, rows) => {
         if (err) {
             console.error('Database error:', err);
             return res.status(500).json({ error: 'Database error', details: err.message });
         }
-        
+
         res.json({
             success: true,
             count: rows.length,
-            tiles: rows
+            tiles: rows.map(deserializeTile)
         });
     });
 });
@@ -263,24 +293,24 @@ app.get('/api/tiles', (req, res) => {
 // Get specific tile by ID
 app.get('/api/tiles/:id', (req, res) => {
     const { id } = req.params;
-    
+
     const query = `
         SELECT * FROM tiles WHERE tile_id = ? AND is_active = 1
     `;
-    
+
     db.get(query, [id], (err, row) => {
         if (err) {
             console.error('Database error:', err);
             return res.status(500).json({ error: 'Database error', details: err.message });
         }
-        
+
         if (!row) {
             return res.status(404).json({ error: 'Tile not found' });
         }
-        
+
         res.json({
             success: true,
-            tile: row
+            tile: deserializeTile(row)
         });
     });
 });
@@ -301,7 +331,11 @@ app.post('/api/add', (req, res) => {
         max_value = 100,
         priority = 50,
         auto_expire = true,
-        size = '1x1'
+        size = '1x1',
+        sparkline_data = null,
+        list_items = null,
+        target_date = null,
+        previous_value = null
     } = req.body;
 
     // Validation
@@ -320,9 +354,15 @@ app.post('/api/add', (req, res) => {
         });
     }
 
+    // sparkline_data / list_items arrive as JSON arrays and are stored as
+    // JSON text - the caller resends the full array on every update, the
+    // wallboard never accumulates or computes history itself.
+    const sparklineJson = sparkline_data !== null ? JSON.stringify(sparkline_data) : null;
+    const listItemsJson = list_items !== null ? JSON.stringify(list_items) : null;
+
     // Check if tile exists
     const checkQuery = 'SELECT id FROM tiles WHERE tile_id = ?';
-    
+
     db.get(checkQuery, [id], (err, existingTile) => {
         if (err) {
             console.error('Database error:', err);
@@ -330,8 +370,8 @@ app.post('/api/add', (req, res) => {
         }
 
         const now = new Date().toISOString();
-        const expires = auto_expire ? 
-            new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() : 
+        const expires = auto_expire ?
+            new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() :
             null;
 
         if (existingTile) {
@@ -341,6 +381,7 @@ app.post('/api/add', (req, res) => {
                     title = ?, icon = ?, tile_type = ?, value = ?, sub_value = ?,
                     status = ?, status_text = ?, additional_info = ?,
                     current_value = ?, max_value = ?, priority = ?, size = ?,
+                    sparkline_data = ?, list_items = ?, target_date = ?, previous_value = ?,
                     updated_at = ?, expires_at = ?, auto_expire = ?, is_active = 1
                 WHERE tile_id = ?
             `;
@@ -349,13 +390,14 @@ app.post('/api/add', (req, res) => {
                 title, icon, tile_type, value, sub_value,
                 status, status_text, additional_info,
                 current_value, max_value, priority, size,
+                sparklineJson, listItemsJson, target_date, previous_value,
                 now, expires, auto_expire, id
             ], function(err) {
                 if (err) {
                     console.error('Database error:', err);
                     return res.status(500).json({ error: 'Database error', details: err.message });
                 }
-                
+
                 res.json({
                     success: true,
                     message: 'Tile updated successfully',
@@ -370,14 +412,16 @@ app.post('/api/add', (req, res) => {
                     tile_id, title, icon, tile_type, value, sub_value,
                     status, status_text, additional_info,
                     current_value, max_value, priority, size,
+                    sparkline_data, list_items, target_date, previous_value,
                     created_at, updated_at, expires_at, auto_expire, is_active
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
             `;
 
             db.run(insertQuery, [
                 id, title, icon, tile_type, value, sub_value,
                 status, status_text, additional_info,
                 current_value, max_value, priority, size,
+                sparklineJson, listItemsJson, target_date, previous_value,
                 now, now, expires, auto_expire
             ], function(err) {
                 if (err) {

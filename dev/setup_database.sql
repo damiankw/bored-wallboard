@@ -8,24 +8,33 @@ CREATE TABLE IF NOT EXISTS tiles (
     
     -- Display Configuration
     title VARCHAR(100) NOT NULL,                    -- "Unassigned Tickets"
-    icon VARCHAR(50),                               -- Emoji or icon class: "🎫" or "fa-ticket"
-    tile_type VARCHAR(20) DEFAULT 'standard',      -- 'standard', 'progress_wheel', 'progress_bar', 'chart'
-    
+    icon VARCHAR(50),                               -- Icon key ("ticket", "rocket", ...) or legacy emoji
+    tile_type VARCHAR(20) DEFAULT 'standard',      -- 'standard', 'progress_wheel', 'progress_bar', 'gauge',
+                                                    -- 'sparkline', 'list', 'countdown', 'delta', 'traffic_light', 'ticker'
+
     -- Values and Data
     value VARCHAR(50) NOT NULL,                     -- Main display value: "12", "Online", "75%"
     sub_value VARCHAR(100),                         -- Secondary value: "7.5TB / 10TB", "Current: 45ms"
-    
+
     -- Status and Appearance
     status VARCHAR(20) DEFAULT 'info',             -- 'error', 'warning', 'success', 'info'
     status_text VARCHAR(50),                       -- "Action Required", "Critical", "Monitor", "Healthy"
-    
+
     -- Additional Information
     additional_info VARCHAR(200),                  -- "High: 3 | Med: 6 | Low: 3", "Toner Low: 12 | Offline: 54"
-    
-    -- Progress/Chart Data (for wheel and bar tiles)
-    current_value INTEGER DEFAULT 0,              -- For progress wheels: current count
-    max_value INTEGER DEFAULT 100,                -- For progress wheels: maximum count
-    
+
+    -- Progress/Chart Data (for wheel, bar and gauge tiles)
+    current_value INTEGER DEFAULT 0,              -- For progress wheels/gauges: current count
+    max_value INTEGER DEFAULT 100,                -- For progress wheels/gauges: maximum count
+
+    -- Data for the newer tile types. The wallboard never computes or
+    -- accumulates these itself - the caller resends the full value on every
+    -- update, same as every other field. No history is tracked locally.
+    sparkline_data TEXT,                          -- JSON array of numbers, e.g. "[12,15,14,18,22,19,25]" (sparkline tile)
+    list_items TEXT,                              -- JSON array of strings or {label,value} objects (list + ticker tiles)
+    target_date TEXT,                             -- ISO datetime to count down to (countdown tile)
+    previous_value REAL,                          -- Prior reading to compare `current_value` against (delta tile)
+
     -- Tile Priority and Ordering
     priority INTEGER DEFAULT 50,                  -- Custom priority (1-100, lower = higher priority)
 
